@@ -2,14 +2,15 @@ version: '3.7'
 
 services:
   shadowsocks:
-    image: shadowsocks/shadowsocks-libev
-    entrypoint: ss-local -s $SERVER_ADDR -p $SERVER_PORT -k $PASSWORD -m $METHOD -l 1080 -b 0.0.0.0
+    image: acrisliu/shadowsocks-libev
     env_file:
       - .env
+    entrypoint: ss-local -s $SERVER_ADDR -p $SERVER_PORT -k $PASSWORD -m $METHOD -l 1080 -b 0.0.0.0 --plugin v2ray-plugin
   polipo:
     image: lsiocommunity/polipo
     depends_on:
       - shadowsocks
     ports:
-      - "8118:8123"
+      - "127.0.0.1:8118:8123"
+      - "172.17.0.1:8118:8123"
     entrypoint: polipo socksParentProxy=shadowsocks:1080 proxyAddress=0.0.0.0
